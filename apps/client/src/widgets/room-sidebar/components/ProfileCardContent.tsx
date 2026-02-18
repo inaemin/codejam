@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { createAvatarGenerator, AvvvatarsProvider, cn } from '@codejam/ui';
+import { AvatarBadge, AvvvatarsAvatar, cn } from '@codejam/ui';
 import { Pencil } from 'lucide-react';
 import { adjustColor } from '@/shared/lib/utils/color';
 
@@ -7,9 +7,6 @@ import { PRESENCE } from '@codejam/common';
 import type { Pt } from '@codejam/common';
 import { ProfileBannerAnimation } from './ProfileBannerAnimation';
 import { useNicknameEdit } from '../lib/hooks/useNicknameEdit';
-
-const provider = new AvvvatarsProvider({ variant: 'shape' });
-const { Avatar } = createAvatarGenerator(provider);
 
 interface ProfileCardContentProps {
   me: Pt;
@@ -41,12 +38,11 @@ export function ProfileCardContent({ me }: ProfileCardContentProps) {
       <div className="b mt-12 flex flex-col gap-4">
         <div className="relative flex items-end justify-between">
           <div className="bg-card relative rounded-full">
-            <Avatar
-              id={me.ptHash}
-              size={50}
-              className="rounded-full shadow-xl"
-              showOnline={me.presence === PRESENCE.ONLINE}
-            />
+            <AvvvatarsAvatar id={me.ptHash} size={48} className="shadow-xl">
+              {me.presence === PRESENCE.ONLINE && (
+                <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+              )}
+            </AvvvatarsAvatar>
           </div>
 
           <div>

@@ -1,4 +1,4 @@
-import { AvvvatarsProvider } from '@codejam/ui';
+import { avvvatarsToSvgString } from '@codejam/ui';
 import { gutter, GutterMarker } from '@codemirror/view';
 import * as Y from 'yjs';
 
@@ -69,8 +69,7 @@ class AvatarMarker extends GutterMarker {
     avatarContainer.style.overflow = 'hidden'; // 둥근 테두리 밖으로 나가는 것 방지
     // avatarContainer.style.border = '1px solid rgba(255, 255, 255, 0.5)'; // 테두리 살짝
 
-    const provider = new AvvvatarsProvider({ variant: 'shape' });
-    const svgString = provider.toSvgString(firstUser.hash, avatarSize);
+    const svgString = avvvatarsToSvgString(firstUser.hash, avatarSize);
 
     avatarContainer.innerHTML = svgString;
 
