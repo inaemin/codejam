@@ -70,17 +70,14 @@ export function useExecutionCompletion(xterm: XTerm | null) {
     const { stage, code, signal } = exit;
     if (code === null && signal === null) return;
 
-    let msg = '';
-
     // Handle compile stage completion
     if (stage === 'compile') {
-      if (signal) {
-        msg = ansi.yellow(`Compilation terminated by signal: ${signal}`);
-      } else if (code === 0) {
-        msg = ansi.green('Compilation successful');
-      } else {
-        msg = ansi.red(`Compilation failed with code ${code}`);
-      }
+      const msg = signal
+        ? ansi.yellow(`Compilation terminated by signal: ${signal}`)
+        : code === 0
+          ? ansi.green('Compilation successful')
+          : ansi.red(`Compilation failed with code ${code}`);
+
       xterm.write(msg + '\r\n\r\n');
       return;
     }
@@ -91,13 +88,16 @@ export function useExecutionCompletion(xterm: XTerm | null) {
       if (!wasExecuting || isExecuting) return;
 
       if (signal) {
-        msg = ansi.yellow(`Terminated by signal: ${signal}`);
+        xterm.write(
+          ansi.yellow(`Terminated by signal: ${signal}`) + '\r\n\r\n',
+        );
       } else if (code === 0) {
-        msg = ansi.green(`Process exited with code ${code}`);
+        xterm.write(
+          ansi.green(`Process exited with code ${code}`) + '\r\n\r\n',
+        );
       } else {
-        msg = ansi.red(`Process exited with code ${code}`);
+        xterm.write(ansi.red(`Process exited with code ${code}`) + '\r\n\r\n');
       }
-      xterm.write(msg + '\r\n\r\n');
     }
   }, [xterm, exit, isExecuting]);
 }
