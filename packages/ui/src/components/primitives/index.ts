@@ -29,3 +29,5 @@ export { LucideAvatarProvider, getAvatarIcon } from './avatar/lucide-avatar.js';
 export { SidebarHeader } from './sidebar-header';
 
 export { Badge, badgeVariants } from './badge';
+
+export { Kbd, KbdGroup } from './kbd';
