@@ -163,8 +163,12 @@ jobs:
             };
 
             const getLighthouseCell = (score) => {
-              if (lighthouseResult === 'success' && score && score !== '-') {
-                return `✅ ${score}`;
+              const parsedScore = Number(score);
+
+              if (lighthouseResult === 'success' && Number.isFinite(parsedScore)) {
+                if (parsedScore >= 90) return `🟢 ${parsedScore}`;
+                if (parsedScore >= 50) return `🟡 ${parsedScore}`;
+                return `🔴 ${parsedScore}`;
               }
 
               if (lighthouseStatus && lighthouseStatus.startsWith('skipped')) {
@@ -206,6 +210,7 @@ jobs:
             > - Accessibility: 스크린리더, 키보드 탐색 등 접근성 준수 정도
             > - Best Practices: 보안/최신 웹 표준/안정성 권장사항 준수 정도
             > - SEO: 검색엔진이 페이지를 잘 이해할 수 있는지에 대한 지표
+            > - 점수 기준: 🟢 90-100 / 🟡 50-89 / 🔴 0-49
             `;
 
             const { data: comments } = await github.rest.issues.listComments({
