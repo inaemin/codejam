@@ -5,6 +5,9 @@ import { Settings } from 'lucide-react';
 const meta: Meta<typeof SidebarHeader> = {
   title: 'Primitives/SidebarHeader',
   component: SidebarHeader,
+  parameters: {
+    layout: 'centered',
+  },
   tags: ['autodocs'],
   decorators: [
     (Story) => (
@@ -19,7 +22,7 @@ const meta: Meta<typeof SidebarHeader> = {
   argTypes: {
     title: { control: 'text' },
     count: { control: 'number' },
-    action: { control: false, description: '우측 상단 액션 컴포넌트' },
+    action: { control: false },
   },
 };
 
@@ -27,14 +30,12 @@ export default meta;
 
 type Story = StoryObj<typeof SidebarHeader>;
 
-// 1. 기본: 타이틀만 있는 경우
 export const Default: Story = {
   args: {
     title: 'MORE',
   },
 };
 
-// 2. 카운트 포함
 export const WithCount: Story = {
   args: {
     title: 'PARTICIPANTS',
@@ -42,7 +43,6 @@ export const WithCount: Story = {
   },
 };
 
-// 3. 액션 포함
 export const WithAction: Story = {
   args: {
     title: 'FILES',
@@ -58,7 +58,6 @@ export const WithAction: Story = {
   },
 };
 
-// 4. 아이콘 액션 예시
 export const WithIconAction: Story = {
   args: {
     title: 'SETTINGS',

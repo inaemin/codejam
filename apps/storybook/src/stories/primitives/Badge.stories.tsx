@@ -1,6 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '@codejam/ui';
-import { Mail, Loader2, ArrowUpRight } from 'lucide-react';
+import {
+  ArrowUpRightIcon,
+  BadgeCheck,
+  BookmarkIcon,
+  Loader2,
+} from 'lucide-react';
 
 const meta = {
   title: 'Primitives/Badge',
@@ -9,77 +14,59 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: [
-        'default',
-        'secondary',
-        'destructive',
-        'outline',
-        'ghost',
-        'link',
-      ],
-    },
-  },
 } satisfies Meta<typeof Badge>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    children: 'Badge',
-    variant: 'default',
-  },
+export const Demo: Story = {
+  render: () => (
+    <div className="flex w-full flex-wrap justify-center gap-2">
+      <Badge>Badge</Badge>
+      <Badge variant="secondary">Secondary</Badge>
+      <Badge variant="destructive">Destructive</Badge>
+      <Badge variant="outline">Outline</Badge>
+    </div>
+  ),
 };
 
-export const Secondary: Story = {
-  args: {
-    children: 'Secondary',
-    variant: 'secondary',
-  },
-};
-
-export const Destructive: Story = {
-  args: {
-    children: 'Destructive',
-    variant: 'destructive',
-  },
-};
-
-export const Outline: Story = {
-  args: {
-    children: 'Outline',
-    variant: 'outline',
-  },
+export const Variants: Story = {
+  render: () => (
+    <div className="flex w-full flex-wrap justify-center gap-2">
+      <Badge>Default</Badge>
+      <Badge variant="secondary">Secondary</Badge>
+      <Badge variant="destructive">Destructive</Badge>
+      <Badge variant="outline">Outline</Badge>
+      <Badge variant="ghost">Ghost</Badge>
+    </div>
+  ),
 };
 
 export const WithIcon: Story = {
-  render: (args) => (
-    <div className="flex gap-2">
-      <Badge {...args} data-icon="inline-start">
-        <Mail />
-        Badge
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Badge variant="secondary">
+        <BadgeCheck data-icon="inline-start" />
+        Verified
       </Badge>
-      <Badge {...args} data-icon="inline-end">
-        Badge
-        <Mail />
+      <Badge variant="outline">
+        Bookmark
+        <BookmarkIcon data-icon="inline-end" />
       </Badge>
     </div>
   ),
 };
 
 export const WithSpinner: Story = {
-  render: (args) => (
+  render: () => (
     <div className="flex flex-wrap gap-2">
-      <Badge {...args} variant="destructive" data-icon="inline-start">
-        <Loader2 className="animate-spin" />
+      <Badge variant="destructive">
+        <Loader2 data-icon="inline-start" className="animate-spin" />
         Deleting
       </Badge>
-      <Badge {...args} variant="secondary" data-icon="inline-end">
+      <Badge variant="secondary">
         Generating
-        <Loader2 className="animate-spin" />
+        <Loader2 data-icon="inline-end" className="animate-spin" />
       </Badge>
     </div>
   ),
@@ -87,32 +74,28 @@ export const WithSpinner: Story = {
 
 export const Link: Story = {
   render: () => (
-    <Badge
-      render={
-        <a href="#link">
-          Open Link <ArrowUpRight data-icon="inline-end" />
-        </a>
-      }
-    />
+    <Badge render={<a href="#link" />}>
+      Open Link <ArrowUpRightIcon data-icon="inline-end" />
+    </Badge>
   ),
 };
 
 export const CustomColors: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300">
+      <Badge className="bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
         Blue
       </Badge>
-      <Badge className="bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300">
+      <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
         Green
       </Badge>
-      <Badge className="bg-sky-50 text-sky-700 hover:bg-sky-100 dark:bg-sky-950 dark:text-sky-300">
+      <Badge className="bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
         Sky
       </Badge>
-      <Badge className="bg-purple-50 text-purple-700 hover:bg-purple-100 dark:bg-purple-950 dark:text-purple-300">
+      <Badge className="bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
         Purple
       </Badge>
-      <Badge className="bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300">
+      <Badge className="bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300">
         Red
       </Badge>
     </div>

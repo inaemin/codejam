@@ -9,10 +9,11 @@ import {
   DialogDescription,
   DialogClose,
   Button,
+  Field,
+  FieldGroup,
   Input,
   Label,
 } from '@codejam/ui';
-import { CopyIcon } from 'lucide-react';
 
 const meta = {
   title: 'Base/Dialog',
@@ -26,63 +27,74 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Basic: Story = {
+export const Demo: Story = {
   render: () => (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline">Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              defaultValue="Pedro Duarte"
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
-            <Input
-              id="username"
-              defaultValue="@peduarte"
-              className="col-span-3"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
-      </DialogContent>
+      <form>
+        <DialogTrigger render={<Button variant="outline" />}>
+          Open Dialog
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you&apos;re done.
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <Label htmlFor="name-1">Name</Label>
+              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+            </Field>
+            <Field>
+              <Label htmlFor="username-1">Username</Label>
+              <Input
+                id="username-1"
+                name="username"
+                defaultValue="@peduarte"
+              />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>
+              Cancel
+            </DialogClose>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
     </Dialog>
   ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '기본 Dialog. 프로필 편집 폼이 포함된 대화상자를 보여줍니다.',
+      },
+    },
+  },
 };
 
-export const CustomClose: Story = {
+export const CustomCloseButton: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '커스텀 닫기 버튼을 사용하는 Dialog. DialogClose 컴포넌트로 사용자 정의 닫기 버튼을 구현합니다.',
+      },
+    },
+  },
   render: () => (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline">Share Link</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+      <DialogTrigger render={<Button variant="outline" />}>Share</DialogTrigger>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share link</DialogTitle>
           <DialogDescription>
             Anyone who has this link will be able to view this.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <div className="grid flex-1 gap-2">
             <Label htmlFor="link" className="sr-only">
               Link
@@ -93,68 +105,119 @@ export const CustomClose: Story = {
               readOnly
             />
           </div>
-          <Button type="submit" size="sm" className="px-3">
-            <span className="sr-only">Copy</span>
-            <CopyIcon className="h-4 w-4" />
-          </Button>
         </div>
         <DialogFooter className="sm:justify-start">
-          <DialogClose
-            render={
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            }
-          />
+          <DialogClose render={<Button type="button" />}>Close</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   ),
 };
 
-export const Scrollable: Story = {
+export const NoCloseButton: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '닫기 버튼이 없는 Dialog. `showCloseButton={false}`로 우측 상단 닫기 버튼을 숨깁니다.',
+      },
+    },
+  },
   render: () => (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline">Scrollable Content</Button>
+      <DialogTrigger render={<Button variant="outline" />}>
+        No Close Button
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Terms of Service</DialogTitle>
+          <DialogTitle>No Close Button</DialogTitle>
           <DialogDescription>
-            Read our terms of service carefully.
+            This dialog doesn&apos;t have a close button in the top-right
+            corner.
           </DialogDescription>
         </DialogHeader>
-        <div className="max-h-[300px] overflow-y-auto">
-          <p className="text-sm leading-7">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-            <br /> <br />
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-            quae ab illo inventore veritatis et quasi architecto beatae vitae
-            dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-            aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
-            eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
-            qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-            sed quia non numquam eius modi tempora incidunt ut labore et dolore
-            magnam aliquam quaerat voluptatem.
-            <br /> <br />
-            Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis
-            suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis
-            autem vel eum iure reprehenderit qui in ea voluptate velit esse quam
-            nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo
-            voluptas nulla pariatur?
-          </p>
+      </DialogContent>
+    </Dialog>
+  ),
+};
+
+export const StickyFooter: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '스티키 푸터가 있는 Dialog. 콘텐츠가 스크롤되어도 푸터 버튼이 항상 하단에 고정됩니다.',
+      },
+    },
+  },
+  render: () => (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline" />}>
+        Sticky Footer
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Sticky Footer</DialogTitle>
+          <DialogDescription>
+            This dialog has a sticky footer that stays visible while the content
+            scrolls.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <p key={index} className="mb-4 leading-normal">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+              pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+              culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          ))}
         </div>
         <DialogFooter>
-          <DialogClose render={<Button>Accept</Button>} />
+          <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
         </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+};
+
+export const ScrollableContent: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '스크롤 가능한 긴 콘텐츠를 포함하는 Dialog. 헤더는 고정되고 본문만 스크롤됩니다.',
+      },
+    },
+  },
+  render: () => (
+    <Dialog>
+      <DialogTrigger render={<Button variant="outline" />}>
+        Scrollable Content
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Scrollable Content</DialogTitle>
+          <DialogDescription>
+            This is a dialog with scrollable content.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <p key={index} className="mb-4 leading-normal">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+              pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+              culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          ))}
+        </div>
       </DialogContent>
     </Dialog>
   ),

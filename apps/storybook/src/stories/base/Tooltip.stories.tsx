@@ -4,7 +4,9 @@ import {
   TooltipTrigger,
   TooltipContent,
   Button,
+  Kbd,
 } from '@codejam/ui';
+import { SaveIcon } from 'lucide-react';
 
 const meta = {
   title: 'Base/Tooltip',
@@ -18,12 +20,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Demo: Story = {
   render: () => (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant="outline">Hover me</Button>
-      </TooltipTrigger>
+      <TooltipTrigger render={<Button variant="outline" />}>Hover</TooltipTrigger>
       <TooltipContent>
         <p>Add to library</p>
       </TooltipContent>
@@ -31,41 +31,51 @@ export const Default: Story = {
   ),
 };
 
-export const Positions: Story = {
+export const Sides: Story = {
   render: () => (
-    <div className="flex gap-4">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="outline">Top</Button>
-        </TooltipTrigger>
-        <TooltipContent side="top">
-          <p>Top tooltip</p>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="outline">Bottom</Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p>Bottom tooltip</p>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="outline">Left</Button>
-        </TooltipTrigger>
-        <TooltipContent side="left">
-          <p>Left tooltip</p>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="outline">Right</Button>
-        </TooltipTrigger>
-        <TooltipContent side="right">
-          <p>Right tooltip</p>
-        </TooltipContent>
-      </Tooltip>
+    <div className="flex flex-wrap gap-2">
+      {(['left', 'top', 'bottom', 'right'] as const).map((side) => (
+        <Tooltip key={side}>
+          <TooltipTrigger
+            render={<Button variant="outline" className="w-fit capitalize" />}
+          >
+            {side}
+          </TooltipTrigger>
+          <TooltipContent side={side}>
+            <p>Add to library</p>
+          </TooltipContent>
+        </Tooltip>
+      ))}
     </div>
+  ),
+};
+
+export const Keyboard: Story = {
+  render: () => (
+    <Tooltip>
+      <TooltipTrigger render={<Button variant="outline" size="icon-sm" />}>
+        <SaveIcon />
+      </TooltipTrigger>
+      <TooltipContent className="pr-1.5">
+        <div className="flex items-center gap-2">
+          Save Changes <Kbd>S</Kbd>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <Tooltip>
+      <TooltipTrigger render={<span className="inline-block w-fit" />}>
+        <Button variant="outline" disabled>
+          Disabled
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>This feature is currently unavailable</p>
+      </TooltipContent>
+    </Tooltip>
   ),
 };

@@ -20,11 +20,11 @@ const meta = {
   argTypes: {
     id: {
       control: 'text',
-      description: '고유 ID (아바타 생성에 사용)',
+      description: 'Unique ID used for avatar generation',
     },
     size: {
       control: { type: 'range', min: 16, max: 120, step: 4 },
-      description: '아바타 크기 (픽셀)',
+      description: 'Avatar size in pixels',
     },
   },
 } satisfies Meta<typeof AvvvatarsAvatar>;
