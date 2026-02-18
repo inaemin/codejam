@@ -140,7 +140,6 @@ export function useGlobalShortcuts(handlers?: ShortcutHandlers) {
         handlers?.onToggleTheme?.();
         return;
       }
-
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {

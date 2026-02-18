@@ -1,14 +1,16 @@
-import { Button, RadixInput as Input, RadixLabel as Label } from '@codejam/ui';
 import {
-  RadixDialog as Dialog,
-  RadixDialogClose as DialogClose,
-  RadixDialogContent as DialogContent,
-  RadixDialogDescription as DialogDescription,
-  RadixDialogFooter as DialogFooter,
-  RadixDialogHeader as DialogHeader,
-  RadixDialogTitle as DialogTitle,
+  Button,
+  Input,
+  Label,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@codejam/ui';
-import { RadixDialogTrigger as DialogTrigger } from '@codejam/ui';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 
 type NewFileDialogProps = {
@@ -52,7 +54,7 @@ export function NewFileDialog({ onSubmit, children }: NewFileDialogProps) {
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children as React.ReactElement}></DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleOnSubmit}>
           <DialogHeader>
@@ -81,11 +83,13 @@ export function NewFileDialog({ onSubmit, children }: NewFileDialogProps) {
             <Button type="submit" variant="default" size="sm">
               생성
             </Button>
-            <DialogClose asChild>
-              <Button type="button" variant="secondary" size="sm">
-                닫기
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button type="button" variant="secondary" size="sm">
+                  닫기
+                </Button>
+              }
+            />
           </DialogFooter>
         </form>
       </DialogContent>

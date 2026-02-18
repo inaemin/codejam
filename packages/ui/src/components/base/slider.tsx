@@ -28,7 +28,7 @@ function Slider({
     <SliderPrimitive.Root
       className={cn(
         isVertical ? 'h-full' : 'w-full',
-        'data-disabled:cursor-not-allowed data-disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50',
+        'aria-disabled:cursor-not-allowed aria-disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50',
         className,
       )}
       defaultValue={defaultValue}
