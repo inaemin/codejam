@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { type SidebarTab } from '@/widgets/room-sidebar/lib/types';
-import { useThemeStore } from '@/shared/lib/hooks/useDarkMode';
 
 interface SidebarState {
   activeSidebarTab: SidebarTab | null;
@@ -18,9 +17,6 @@ export const useSidebarStore = create<SidebarState>()(
       isPinned: false,
       setActiveSidebarTab: (tab) => set({ activeSidebarTab: tab }),
       toggleSidebarTab: (tab) => {
-        // 이스터 에그 카운터 증가
-        useThemeStore.getState().incrementSidebarToggle();
-
         set((state) => ({
           activeSidebarTab:
             state.activeSidebarTab === tab && !state.isPinned ? null : tab,

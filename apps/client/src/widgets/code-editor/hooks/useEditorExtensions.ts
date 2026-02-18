@@ -24,11 +24,6 @@ import { type Language } from '@codejam/common';
 import { useRoomStore } from '@/stores/room';
 import { usePt } from '@/stores/pts';
 import { useFileStore } from '@/stores/file';
-import {
-  rainbowEditorTheme,
-  neonEditorTheme,
-  pastelEditorTheme,
-} from '../plugin/TrollEditorTheme';
 
 const cursorTheme = EditorView.theme({
   // 원격 라인 선택으로 인한 텍스트 밀림 방지
@@ -72,7 +67,6 @@ interface UseEditorExtensionsProps {
   language: Language;
   readOnly: boolean;
   isDark: boolean;
-  hiddenTheme: 'rainbow' | 'neon' | 'pastel' | null;
   fontSize: number;
   users: RemoteUser[];
   handleGutterClick: (params: {
@@ -108,7 +102,6 @@ export function useEditorExtensions(props: UseEditorExtensionsProps) {
     language,
     readOnly,
     isDark,
-    hiddenTheme,
     fontSize,
     users,
     handleGutterClick,
@@ -152,17 +145,7 @@ export function useEditorExtensions(props: UseEditorExtensionsProps) {
 
       // Dynamic Compartments Initial Config
       compartments.localTheme.of(localTheme(me)),
-      compartments.theme.of(
-        hiddenTheme === 'rainbow'
-          ? rainbowEditorTheme
-          : hiddenTheme === 'neon'
-            ? neonEditorTheme
-            : hiddenTheme === 'pastel'
-              ? pastelEditorTheme
-              : isDark
-                ? oneDark
-                : [],
-      ),
+      compartments.theme.of(isDark ? oneDark : []),
       compartments.fontSize.of(
         EditorView.theme({ '&': { fontSize: `${fontSize}px` } }),
       ),
