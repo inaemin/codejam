@@ -5,6 +5,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
+  Kbd,
+  KbdGroup,
 } from '@codejam/ui';
 import { FileQuestion, FileX } from 'lucide-react';
 
@@ -16,16 +18,11 @@ function ShortcutRow({ label, keys }: { label: string; keys: string[] }) {
   return (
     <div className="hover:bg-muted flex w-full items-center justify-between rounded-sm p-2 text-sm">
       <span className="text-muted-foreground/90">{label}</span>
-      <div className="flex gap-1.5">
+      <KbdGroup>
         {keys.map((k, idx) => (
-          <kbd
-            key={idx}
-            className="bg-muted/50 border-border/40 flex min-w-6 items-center justify-center rounded border font-sans text-xs font-medium shadow-sm"
-          >
-            {k}
-          </kbd>
+          <Kbd key={idx}>{k}</Kbd>
         ))}
-      </div>
+      </KbdGroup>
     </div>
   );
 }
