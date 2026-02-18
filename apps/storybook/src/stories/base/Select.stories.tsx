@@ -8,7 +8,15 @@ import {
   SelectGroup,
   SelectLabel,
   SelectSeparator,
+  Field,
+  FieldLabel,
+  FieldError,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  Switch,
 } from '@codejam/ui';
+import React from 'react';
 
 const meta = {
   title: 'Base/Select',
@@ -22,56 +30,163 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+const fruits = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+  { label: 'Blueberry', value: 'blueberry' },
+  { label: 'Grapes', value: 'grapes' },
+  { label: 'Pineapple', value: 'pineapple' },
+];
+
+const vegetables = [
+  { label: 'Carrot', value: 'carrot' },
+  { label: 'Broccoli', value: 'broccoli' },
+  { label: 'Spinach', value: 'spinach' },
+];
+
+const fruitSelectItems = [{ label: 'Select a fruit', value: null }, ...fruits];
+
+const groupedItems = [...fruitSelectItems, ...vegetables];
+
+const northAmerica = [
+  { label: 'Eastern Standard Time', value: 'est' },
+  { label: 'Central Standard Time', value: 'cst' },
+  { label: 'Mountain Standard Time', value: 'mst' },
+  { label: 'Pacific Standard Time', value: 'pst' },
+  { label: 'Alaska Standard Time', value: 'akst' },
+  { label: 'Hawaii Standard Time', value: 'hst' },
+];
+
+const europeAfrica = [
+  { label: 'Greenwich Mean Time', value: 'gmt' },
+  { label: 'Central European Time', value: 'cet' },
+  { label: 'Eastern European Time', value: 'eet' },
+  { label: 'Western European Summer Time', value: 'west' },
+  { label: 'Central Africa Time', value: 'cat' },
+  { label: 'East Africa Time', value: 'eat' },
+];
+
+const asia = [
+  { label: 'Moscow Time', value: 'msk' },
+  { label: 'India Standard Time', value: 'ist' },
+  { label: 'China Standard Time', value: 'cst_china' },
+  { label: 'Japan Standard Time', value: 'jst' },
+  { label: 'Korea Standard Time', value: 'kst' },
+  { label: 'Indonesia Central Standard Time', value: 'ist_indonesia' },
+];
+
+const australiaPacific = [
+  { label: 'Australian Western Standard Time', value: 'awst' },
+  { label: 'Australian Central Standard Time', value: 'acst' },
+  { label: 'Australian Eastern Standard Time', value: 'aest' },
+  { label: 'New Zealand Standard Time', value: 'nzst' },
+  { label: 'Fiji Time', value: 'fjt' },
+];
+
+const southAmerica = [
+  { label: 'Argentina Time', value: 'art' },
+  { label: 'Bolivia Time', value: 'bot' },
+  { label: 'Brasilia Time', value: 'brt' },
+  { label: 'Chile Standard Time', value: 'clt' },
+];
+
+const timezoneItems = [
+  { label: 'Select a timezone', value: null },
+  ...northAmerica,
+  ...europeAfrica,
+  ...asia,
+  ...australiaPacific,
+  ...southAmerica,
+];
+
+export const Demo: Story = {
   render: () => (
-    <Select>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="선택하세요" />
+    <Select items={fruitSelectItems}>
+      <SelectTrigger className="w-100 max-w-48">
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="option1">옵션 1</SelectItem>
-        <SelectItem value="option2">옵션 2</SelectItem>
-        <SelectItem value="option3">옵션 3</SelectItem>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          {fruitSelectItems.map((item) => (
+            <SelectItem key={item.value ?? 'select-a-fruit'} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   ),
+};
+
+export const AlignItemWithTrigger: Story = {
+  render: () => {
+    const [alignItemWithTrigger, setAlignItemWithTrigger] =
+      React.useState(true);
+
+    return (
+      <FieldGroup className="w-100 max-w-xs">
+        <Field orientation="horizontal">
+          <FieldContent>
+            <FieldLabel htmlFor="align-item">Align Item</FieldLabel>
+            <FieldDescription>
+              Toggle to align the item with the trigger.
+            </FieldDescription>
+          </FieldContent>
+          <Switch
+            id="align-item"
+            checked={alignItemWithTrigger}
+            onCheckedChange={setAlignItemWithTrigger}
+          />
+        </Field>
+        <Field>
+          <Select items={fruitSelectItems} defaultValue="banana">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={alignItemWithTrigger}>
+              <SelectGroup>
+                {fruitSelectItems.map((item) => (
+                  <SelectItem
+                    key={item.value ?? 'select-a-fruit'}
+                    value={item.value}
+                  >
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
+      </FieldGroup>
+    );
+  },
 };
 
 export const Groups: Story = {
   render: () => (
-    <Select>
-      <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder="음식 선택" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>과일</SelectLabel>
-          <SelectItem value="apple">사과</SelectItem>
-          <SelectItem value="banana">바나나</SelectItem>
-          <SelectItem value="orange">오렌지</SelectItem>
-        </SelectGroup>
-        <SelectSeparator />
-        <SelectGroup>
-          <SelectLabel>채소</SelectLabel>
-          <SelectItem value="carrot">당근</SelectItem>
-          <SelectItem value="potato">감자</SelectItem>
-          <SelectItem value="broccoli">브로콜리</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  ),
-};
-
-export const WithDefaultValue: Story = {
-  render: () => (
-    <Select defaultValue="option2">
-      <SelectTrigger className="w-[180px]">
+    <Select items={groupedItems}>
+      <SelectTrigger className="w-100 max-w-48">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="option1">옵션 1</SelectItem>
-        <SelectItem value="option2">옵션 2</SelectItem>
-        <SelectItem value="option3">옵션 3</SelectItem>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          {fruits.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectSeparator />
+        <SelectGroup>
+          <SelectLabel>Vegetables</SelectLabel>
+          {vegetables.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
       </SelectContent>
     </Select>
   ),
@@ -79,33 +194,50 @@ export const WithDefaultValue: Story = {
 
 export const Scrollable: Story = {
   render: () => (
-    <Select>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="타임존 선택" />
+    <Select items={timezoneItems}>
+      <SelectTrigger className="w-100 max-w-64">
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>아시아</SelectLabel>
-          <SelectItem value="seoul">서울</SelectItem>
-          <SelectItem value="tokyo">도쿄</SelectItem>
-          <SelectItem value="beijing">베이징</SelectItem>
-          <SelectItem value="bangkok">방콕</SelectItem>
+          <SelectLabel>North America</SelectLabel>
+          {northAmerica.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectGroup>
-        <SelectSeparator />
         <SelectGroup>
-          <SelectLabel>유럽</SelectLabel>
-          <SelectItem value="london">런던</SelectItem>
-          <SelectItem value="paris">파리</SelectItem>
-          <SelectItem value="berlin">베를린</SelectItem>
-          <SelectItem value="rome">로마</SelectItem>
+          <SelectLabel>Europe & Africa</SelectLabel>
+          {europeAfrica.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectGroup>
-        <SelectSeparator />
         <SelectGroup>
-          <SelectLabel>아메리카</SelectLabel>
-          <SelectItem value="ny">뉴욕</SelectItem>
-          <SelectItem value="la">로스앤젤레스</SelectItem>
-          <SelectItem value="chicago">시카고</SelectItem>
-          <SelectItem value="toronto">토론토</SelectItem>
+          <SelectLabel>Asia</SelectLabel>
+          {asia.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Australia & Pacific</SelectLabel>
+          {australiaPacific.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>South America</SelectLabel>
+          {southAmerica.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>
@@ -113,28 +245,61 @@ export const Scrollable: Story = {
 };
 
 export const Disabled: Story = {
-  render: () => (
-    <Select disabled>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="비활성화" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="option1">옵션 1</SelectItem>
-      </SelectContent>
-    </Select>
-  ),
+  render: () => {
+    const items = [
+      { label: 'Select a fruit', value: null },
+      { label: 'Apple', value: 'apple' },
+      { label: 'Banana', value: 'banana' },
+      { label: 'Blueberry', value: 'blueberry' },
+      { label: 'Grapes', value: 'grapes', disabled: true },
+      { label: 'Pineapple', value: 'pineapple' },
+    ];
+
+    return (
+      <Select items={items} disabled>
+        <SelectTrigger className="w-100 max-w-48">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {items.map((item) => (
+              <SelectItem
+                key={item.value ?? 'select-a-fruit'}
+                value={item.value}
+                disabled={item.disabled}
+              >
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    );
+  },
 };
 
 export const Invalid: Story = {
   render: () => (
-    <Select>
-      <SelectTrigger className="w-[180px]" aria-invalid>
-        <SelectValue placeholder="오류 상태" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="option1">옵션 1</SelectItem>
-        <SelectItem value="option2">옵션 2</SelectItem>
-      </SelectContent>
-    </Select>
+    <Field data-invalid className="w-100 max-w-48">
+      <FieldLabel>Fruit</FieldLabel>
+      <Select items={fruitSelectItems}>
+        <SelectTrigger aria-invalid>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {fruitSelectItems.map((item) => (
+              <SelectItem
+                key={item.value ?? 'select-a-fruit'}
+                value={item.value}
+              >
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      <FieldError>Please select a fruit.</FieldError>
+    </Field>
   ),
 };

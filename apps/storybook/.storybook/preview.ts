@@ -1,18 +1,45 @@
 import type { Preview } from '@storybook/react-vite';
-import { useEffect } from 'react';
+import { createElement, useEffect } from 'react';
+import { ThemeProvider } from '@codejam/ui';
 import '@codejam/ui/styles.css';
+
+const getSystemTheme = (): 'light' | 'dark' => {
+  if (typeof window === 'undefined') return 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+};
 
 const preview: Preview = {
   decorators: [
     (Story, context) => {
-      const bg = context.globals.backgrounds?.value;
-      const isDark = bg === 'dark';
+      const theme = context.globals.theme;
+      const background = context.globals.backgrounds?.value;
+      const forcedTheme =
+        theme === 'light' || theme === 'dark'
+          ? theme
+          : background === 'dark'
+            ? 'dark'
+            : background === 'light'
+              ? 'light'
+              : getSystemTheme();
 
       useEffect(() => {
-        document.documentElement.classList.toggle('dark', isDark);
-      }, [isDark]);
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(forcedTheme);
+      }, [forcedTheme]);
 
-      return Story();
+      return createElement(
+        ThemeProvider,
+        {
+          attribute: 'class',
+          defaultTheme: 'system',
+          enableSystem: true,
+          storageKey: 'vite-ui-theme',
+          forcedTheme,
+        },
+        createElement(Story),
+      );
     },
   ],
   parameters: {

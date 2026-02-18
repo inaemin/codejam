@@ -1,10 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { type AvatarUser } from '../plugin/LineAvatars';
 import { createPortal } from 'react-dom';
-import { createAvatarGenerator, AvvvatarsProvider } from '@codejam/ui';
-
-const provider = new AvvvatarsProvider({ variant: 'shape' });
-const { Avatar } = createAvatarGenerator(provider);
+import { AvvvatarsAvatar } from '@codejam/ui';
 
 interface Props {
   isOpen: boolean;
@@ -40,17 +37,17 @@ export function AvatarGutterMenu({ isOpen, position, users, onClose }: Props) {
         top: position.y - 10, // 클릭 위치보다 약간 위
       }}
     >
-      <div className="mb-1 px-1 text-xs font-semibold text-gray-500">
-        Currently Editing ({users.length})
+      <div className="text-xs font-semibold text-gray-500">
+        현재 편집 중 ({users.length})
       </div>
-      <div className="flex max-w-[200px] flex-wrap gap-2">
+      <div className="grid max-w-50 grid-cols-2">
         {users.map((user) => (
           <div
             key={user.hash}
             className="flex items-center gap-2 rounded p-1 pr-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <Avatar id={user.hash} size={20} />
-            <span className="max-w-[100px] truncate text-sm text-gray-800 dark:text-gray-200">
+            <AvvvatarsAvatar id={user.hash} size={20} />
+            <span className="max-w-25 truncate text-sm text-gray-800 dark:text-gray-200">
               {user.name || 'Anonymous'}
             </span>
           </div>

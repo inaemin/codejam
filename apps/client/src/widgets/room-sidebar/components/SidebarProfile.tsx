@@ -1,12 +1,14 @@
-import { Popover, PopoverTrigger, PopoverContent } from '@codejam/ui';
+import {
+  AvatarBadge,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@codejam/ui';
 import { usePt } from '@/stores/pts';
 import { useRoomStore } from '@/stores/room';
-import { createAvatarGenerator, AvvvatarsProvider } from '@codejam/ui';
+import { AvvvatarsAvatar } from '@codejam/ui';
 import { ProfileCardContent } from './ProfileCardContent';
 import { PRESENCE } from '@codejam/common';
-
-const provider = new AvvvatarsProvider({ variant: 'shape' });
-const { Avatar } = createAvatarGenerator(provider);
 
 export function SidebarProfile() {
   const { myPtId } = useRoomStore();
@@ -25,11 +27,15 @@ export function SidebarProfile() {
             title="설정 및 프로필"
           >
             <div className="transition-transform duration-150 ease-out group-hover:scale-[1.08] group-active:scale-[0.96]">
-              <Avatar
+              <AvvvatarsAvatar
                 id={me.ptHash}
                 size={40}
-                showOnline={me.presence === PRESENCE.ONLINE}
-              />
+                className="ring-accent ring-1"
+              >
+                {me.presence === PRESENCE.ONLINE && (
+                  <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+                )}
+              </AvvvatarsAvatar>
             </div>
           </button>
         }

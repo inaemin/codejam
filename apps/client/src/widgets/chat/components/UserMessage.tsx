@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { createAvatarGenerator, AvvvatarsProvider, Button } from '@codejam/ui';
+import { AvvvatarsAvatar, Button } from '@codejam/ui';
 import { RotateCcw, X } from 'lucide-react';
 import type { UserMessage as UserMessageType } from '@/stores/chat';
 import { useRoomStore } from '@/stores/room';
@@ -8,9 +8,6 @@ import { emitChatMessage } from '@/stores/socket-events/chat';
 import { MarkdownContent } from './MarkdownContent';
 import { FileMention } from './FileMention';
 import { parseFileMentions } from '../lib/parseFileMentions';
-
-const provider = new AvvvatarsProvider({ variant: 'shape' });
-const { Avatar } = createAvatarGenerator(provider);
 
 type UserMessageProps = {
   message: UserMessageType;
@@ -63,7 +60,7 @@ export function UserMessage({ message }: UserMessageProps) {
     >
       {/* 아바타 */}
       <div className="shrink-0 pt-0.5">
-        <Avatar id={pt.ptHash} size={28} />
+        <AvvvatarsAvatar id={pt.ptHash} size={24} />
       </div>
 
       {/* 메시지 내용 */}

@@ -5,18 +5,18 @@
  */
 import { useState, useEffect } from 'react';
 import {
-  RadixDialog as Dialog,
-  RadixDialogContent as DialogContent,
-  RadixDialogDescription as DialogDescription,
-  RadixDialogHeader as DialogHeader,
-  RadixDialogTitle as DialogTitle,
-  RadixDialogTrigger as DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Label,
+  Button,
+  Input,
+  Slider,
+  Switch,
 } from '@codejam/ui';
-import { RadixLabel as Label } from '@codejam/ui';
-import { Button } from '@codejam/ui';
-import { RadixInput as Input } from '@codejam/ui';
-import { RadixSlider as Slider } from '@codejam/ui';
-import { RadixSwitch as Switch } from '@codejam/ui';
 import {
   Settings,
   RotateCcw,
@@ -67,24 +67,26 @@ export function SettingsDialog() {
   };
 
   // Slider 변경 핸들러
-  const handleSliderChange = (value: number[]) => {
-    const newValue = value[0];
+  const handleSliderChange = (value: number | readonly number[]) => {
+    const newValue = Array.isArray(value) ? value[0] : (value as number);
     setFontSize(newValue);
     setInputValue(newValue.toString());
   };
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 px-2 text-xs sm:px-3"
-        >
-          <Settings className="h-4 w-4" />
-          <span className="hidden lg:inline">Settings</span>
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-1.5 px-2 text-xs sm:px-3"
+          >
+            <Settings className="h-4 w-4" />
+            <span className="hidden lg:inline">Settings</span>
+          </Button>
+        }
+      />
       <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Editor Settings</DialogTitle>

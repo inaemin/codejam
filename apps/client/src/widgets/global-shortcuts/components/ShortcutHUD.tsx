@@ -1,29 +1,34 @@
 import { useShortcutStore } from '@/stores/shortcut';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@codejam/ui';
 import { ShortcutListContent } from './ShortcutListContent';
 
 export function ShortcutHUD() {
   const isHUDOpen = useShortcutStore((state) => state.isHUDOpen);
-
-  if (!isHUDOpen) return null;
+  const setHUDOpen = useShortcutStore((state) => state.setHUDOpen);
 
   return (
-    <div className="bg-background/60 animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-md duration-200">
-      <div className="bg-card border-border animate-in zoom-in-95 w-[760px] rounded-3xl border p-8 shadow-2xl duration-150">
-        <div className="mb-8 flex items-end justify-between border-b pb-4">
-          <h2 className="text-2xl font-bold tracking-tight">Quick Shortcuts</h2>
-          <span className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-            CodeJam IDE Guide
-          </span>
-        </div>
+    <Dialog open={isHUDOpen} onOpenChange={setHUDOpen}>
+      <DialogContent showCloseButton={false} className="sm:max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>단축키 안내</DialogTitle>
+          <DialogDescription>
+            자주 쓰는 단축키를 한눈에 확인하고, 원하는 작업을 더 빠르게 실행해
+            보세요.
+          </DialogDescription>
+        </DialogHeader>
 
-        <ShortcutListContent className="grid grid-cols-2 gap-x-12 gap-y-8" />
+        <ShortcutListContent className="gap-6 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-6" />
 
-        <div className="mt-10 flex items-center justify-center gap-2 border-t pt-6">
-          <p className="text-muted-foreground text-xs font-medium">
-            누르고 있는 키를 떼면 창이 닫힙니다
-          </p>
-        </div>
-      </div>
-    </div>
+        <DialogDescription className="text-center text-xs">
+          누르고 있는 키를 떼면 창이 닫힙니다
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 }

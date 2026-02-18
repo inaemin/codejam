@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Textarea, Label, RadixButton as Button } from '@codejam/ui';
+import {
+  Button as ButtonPrimitive,
+  Field as FieldPrimitive,
+  FieldDescription,
+  FieldLabel,
+  Textarea,
+} from '@codejam/ui';
 
 const meta = {
   title: 'Primitives/Textarea',
@@ -8,138 +14,59 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    placeholder: {
-      control: 'text',
-      description: '플레이스홀더',
-    },
-    disabled: {
-      control: 'boolean',
-      description: '비활성화 상태',
-    },
-    rows: {
-      control: 'number',
-      description: '행 수',
-    },
-  },
 } satisfies Meta<typeof Textarea>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    placeholder: '내용을 입력하세요...',
-  },
-  render: (args) => (
-    <div className="w-[400px] space-y-2">
-      <Label htmlFor="textarea">메시지</Label>
-      <Textarea id="textarea" {...args} />
-    </div>
-  ),
-};
-
-export const WithValue: Story = {
-  args: {
-    defaultValue: '이미 입력된 내용입니다.\n여러 줄로 작성할 수 있습니다.',
-  },
-  render: (args) => (
-    <div className="w-[400px] space-y-2">
-      <Label htmlFor="textarea-value">내용</Label>
-      <Textarea id="textarea-value" {...args} />
-    </div>
-  ),
-};
-
-export const Disabled: Story = {
-  args: {
-    placeholder: '비활성화된 텍스트 영역',
-    disabled: true,
-  },
-  render: (args) => (
-    <div className="w-[400px] space-y-2">
-      <Label htmlFor="textarea-disabled">메시지 (비활성화)</Label>
-      <Textarea id="textarea-disabled" {...args} />
-    </div>
-  ),
-};
-
-export const WithRows: Story = {
-  args: {
-    placeholder: '10줄 크기의 텍스트 영역',
-    rows: 10,
-  },
-  render: (args) => (
-    <div className="w-[400px] space-y-2">
-      <Label htmlFor="textarea-rows">긴 내용</Label>
-      <Textarea id="textarea-rows" {...args} />
-    </div>
-  ),
-};
-
-export const Required: Story = {
-  args: {
-    placeholder: '필수 입력 항목',
-    required: true,
-  },
-  render: (args) => (
-    <div className="w-[400px] space-y-2">
-      <Label htmlFor="textarea-required">
-        피드백 <span className="text-destructive">*</span>
-      </Label>
-      <Textarea id="textarea-required" {...args} />
-      <p className="text-xs text-muted-foreground">이 항목은 필수입니다.</p>
-    </div>
-  ),
-};
-
-export const MaxLength: Story = {
-  args: {
-    placeholder: '최대 200자까지 입력 가능',
-    maxLength: 200,
-  },
-  render: (args) => (
-    <div className="w-[400px] space-y-2">
-      <Label htmlFor="textarea-maxlength">코멘트</Label>
-      <Textarea id="textarea-maxlength" {...args} />
-      <p className="text-xs text-muted-foreground">최대 200자</p>
-    </div>
+export const Demo: Story = {
+  render: () => (
+    <Textarea placeholder="Type your message here." className="w-100" />
   ),
 };
 
 export const Field: Story = {
   render: () => (
-    <div className="grid w-[400px] gap-1.5">
-      <Label htmlFor="message-2">메시지</Label>
-      <Textarea placeholder="메시지를 입력하세요." id="message-2" />
-      <p className="text-sm text-muted-foreground">
-        이 메시지는 지원팀에게 전송됩니다.
-      </p>
-    </div>
+    <FieldPrimitive className="w-100">
+      <FieldLabel htmlFor="textarea-message">Message</FieldLabel>
+      <FieldDescription>Enter your message below.</FieldDescription>
+      <Textarea id="textarea-message" placeholder="Type your message here." />
+    </FieldPrimitive>
+  ),
+};
+
+export const Disabled: Story = {
+  render: () => (
+    <FieldPrimitive className="w-100" data-disabled>
+      <FieldLabel htmlFor="textarea-disabled">Message</FieldLabel>
+      <Textarea
+        id="textarea-disabled"
+        placeholder="Type your message here."
+        disabled
+      />
+    </FieldPrimitive>
   ),
 };
 
 export const Invalid: Story = {
   render: () => (
-    <div className="grid w-[400px] gap-1.5">
-      <Label htmlFor="message-invalid" className="text-destructive">
-        잘못된 메시지
-      </Label>
+    <FieldPrimitive className="w-100" data-invalid>
+      <FieldLabel htmlFor="textarea-invalid">Message</FieldLabel>
       <Textarea
-        placeholder="메시지를 입력하세요."
-        id="message-invalid"
-        aria-invalid="true"
+        id="textarea-invalid"
+        placeholder="Type your message here."
+        aria-invalid
       />
-      <p className="text-sm text-destructive">이 항목은 필수입니다.</p>
-    </div>
+      <FieldDescription>Please enter a valid message.</FieldDescription>
+    </FieldPrimitive>
   ),
 };
 
-export const WithButton: Story = {
+export const Button: Story = {
   render: () => (
-    <div className="grid w-[400px] gap-2">
-      <Textarea placeholder="메시지를 입력하세요." />
-      <Button>메시지 전송</Button>
+    <div className="grid w-100 gap-2">
+      <Textarea placeholder="Type your message here." />
+      <ButtonPrimitive>Send message</ButtonPrimitive>
     </div>
   ),
 };

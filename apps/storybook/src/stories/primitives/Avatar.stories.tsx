@@ -1,8 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { createAvatarGenerator, LucideAvatarProvider } from '@codejam/ui';
+import {
+  createAvatarGenerator,
+  LucideAvatarProvider,
+  BoringAvatarProvider,
+  AvvvatarsProvider,
+} from '@codejam/ui';
 
 const provider = new LucideAvatarProvider();
 const { Avatar } = createAvatarGenerator(provider);
+const { Avatar: BoringAvatar } = createAvatarGenerator(
+  new BoringAvatarProvider({ variant: 'beam' }),
+);
+const { Avatar: AvvvatarsAvatar } = createAvatarGenerator(
+  new AvvvatarsProvider({ variant: 'shape' }),
+);
 
 // 참가자 색상 (PT_COLORS)
 const PT_COLORS = [
@@ -15,117 +26,124 @@ const PT_COLORS = [
 ] as const;
 
 const meta = {
-  title: 'Primitives/Avatar',
+  title: 'Primitives/AvatarComparison',
   component: Avatar,
   parameters: {
     layout: 'centered',
+    controls: {
+      disable: true,
+    },
   },
   tags: ['autodocs'],
-  argTypes: {
-    id: {
-      control: 'text',
-      description: '아바타 ID (아이콘 결정)',
-    },
-    color: {
-      control: 'color',
-      description: '배경색',
-    },
-    size: {
-      control: { type: 'range', min: 16, max: 120, step: 4 },
-      description: '아바타 크기 (픽셀)',
-    },
-  },
 } satisfies Meta<typeof Avatar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Comparison: Story = {
   args: {
     id: 'user-123',
-    color: PT_COLORS[2], // blue
-    size: 40,
   },
-};
-
-export const WithBadge: Story = {
-  args: {
-    id: 'user-123',
-    color: PT_COLORS[2],
-    size: 40,
-    badge: '👑',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'LucideAvatar, BoringAvatar, Avvvatars를 size와 badge 기준으로 한 화면에서 비교하는 스토리입니다.',
+      },
+    },
   },
-};
+  render: () => {
+    const sizes = [24, 40, 56] as const;
 
-export const Small: Story = {
-  args: {
-    id: 'user-456',
-    color: PT_COLORS[1], // green
-    size: 32,
+    return (
+      <div className="flex w-full max-w-4xl flex-col gap-8 p-2">
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold">Size</h3>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="w-28 text-sm text-gray-500">Lucide</span>
+              {sizes.map((size) => (
+                <div key={size} className="flex flex-col items-center gap-1">
+                  <Avatar id="user-123" color={PT_COLORS[2]} size={size} />
+                  <span className="text-xs text-gray-500">{size}px</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="w-28 text-sm text-gray-500">Boring</span>
+              {sizes.map((size) => (
+                <div key={size} className="flex flex-col items-center gap-1">
+                  <BoringAvatar id="1001" size={size} />
+                  <span className="text-xs text-gray-500">{size}px</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="w-28 text-sm text-gray-500">Avvvatars</span>
+              {sizes.map((size) => (
+                <div key={size} className="flex flex-col items-center gap-1">
+                  <AvvvatarsAvatar id="1001" size={size} />
+                  <span className="text-xs text-gray-500">{size}px</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold">Badge</h3>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="w-28 text-sm text-gray-500">Lucide</span>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-center gap-1">
+                  <Avatar id="user-123" color={PT_COLORS[2]} size={40} />
+                  <span className="text-xs text-gray-500">without</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <Avatar
+                    id="user-123"
+                    color={PT_COLORS[2]}
+                    size={40}
+                    badge="👑"
+                  />
+                  <span className="text-xs text-gray-500">with</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="w-28 text-sm text-gray-500">Boring</span>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-center gap-1">
+                  <BoringAvatar id="1001" size={40} />
+                  <span className="text-xs text-gray-500">without</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <BoringAvatar id="1001" size={40} badge="👑" />
+                  <span className="text-xs text-gray-500">with</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="w-28 text-sm text-gray-500">Avvvatars</span>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-center gap-1">
+                  <AvvvatarsAvatar id="1001" size={40} />
+                  <span className="text-xs text-gray-500">without</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <AvvvatarsAvatar id="1001" size={40} badge="👑" />
+                  <span className="text-xs text-gray-500">with</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
   },
-};
-
-export const Large: Story = {
-  args: {
-    id: 'user-789',
-    color: PT_COLORS[0], // red
-    size: 64,
-  },
-};
-
-export const AllParticipantColors: Story = {
-  args: { id: 'user', color: PT_COLORS[0], size: 40 },
-  render: () => (
-    <div className="flex items-center gap-4">
-      {PT_COLORS.map((color, i) => (
-        <div key={color} className="flex flex-col items-center gap-1">
-          <Avatar id={`user-${i}`} color={color} size={40} />
-          <span className="text-xs text-gray-500">{color}</span>
-        </div>
-      ))}
-    </div>
-  ),
-};
-
-export const DifferentSizes: Story = {
-  args: { id: 'user-123', color: PT_COLORS[2], size: 40 },
-  render: () => (
-    <div className="flex items-center gap-4">
-      <Avatar id="user-123" color={PT_COLORS[2]} size={24} />
-      <Avatar id="user-123" color={PT_COLORS[2]} size={32} />
-      <Avatar id="user-123" color={PT_COLORS[2]} size={40} />
-      <Avatar id="user-123" color={PT_COLORS[2]} size={56} />
-      <Avatar id="user-123" color={PT_COLORS[2]} size={72} />
-    </div>
-  ),
-};
-
-export const WithBadges: Story = {
-  args: { id: 'host-user', color: PT_COLORS[0], size: 48 },
-  render: () => (
-    <div className="flex items-center gap-4">
-      <Avatar id="host-user" color={PT_COLORS[0]} size={48} badge="👑" />
-      <Avatar id="star-user" color={PT_COLORS[1]} size={48} badge="⭐" />
-      <Avatar id="fire-user" color={PT_COLORS[2]} size={48} badge="🔥" />
-      <Avatar id="sparkle-user" color={PT_COLORS[3]} size={48} badge="✨" />
-    </div>
-  ),
-};
-
-export const AllIcons: Story = {
-  args: { id: 'icon-0', color: PT_COLORS[2], size: 48 },
-  render: () => (
-    <div className="flex flex-wrap items-center gap-4">
-      {Array.from({ length: 12 }, (_, i) => (
-        <div key={i} className="flex flex-col items-center gap-1">
-          <Avatar
-            id={`icon-${i}`}
-            color={PT_COLORS[i % PT_COLORS.length]}
-            size={48}
-          />
-          <span className="text-xs text-gray-500">icon-{i}</span>
-        </div>
-      ))}
-    </div>
-  ),
 };

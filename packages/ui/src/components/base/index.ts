@@ -85,9 +85,9 @@ export { Slider } from './slider';
 export { Switch } from './switch';
 export {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
+  TabsContent,
   tabsListVariants,
 } from './tabs';
 export {
@@ -139,3 +139,13 @@ export {
   PopoverTitle,
   PopoverTrigger,
 } from './popover';
+export {
+  Avatar,
+  type AvatarSize,
+  AvatarImage,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarBadge,
+} from './avatar';
+export { AvvvatarsAvatar, avvvatarsToSvgString } from './avataravvvatars';

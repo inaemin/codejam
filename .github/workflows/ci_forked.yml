@@ -1,0 +1,244 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for client changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'apps/client/**'
+              - 'packages/common/**'
+              - 'packages/ui/**'
+              - 'pnpm-lock.yaml'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Format check
+        id: format
+        continue-on-error: true
+        run: pnpm format:check
+
+      - name: Lint
+        id: lint
+        continue-on-error: true
+        run: pnpm lint
+
+      - name: Type check
+        id: typecheck
+        continue-on-error: true
+        run: pnpm check-types
+
+      - name: Test
+        id: test
+        continue-on-error: true
+        run: pnpm test
+
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: pnpm build
+
+      - name: Setup Chrome for Lighthouse
+        if: steps.filter.outputs.client == 'true'
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Lighthouse
+        id: lighthouse
+        if: steps.filter.outputs.client == 'true' && steps.build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          pnpm --filter client preview -- --host 127.0.0.1 --port 4173 >/tmp/client-preview.log 2>&1 &
+          PREVIEW_PID=$!
+          trap 'kill "$PREVIEW_PID" || true' EXIT
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173 >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          curl -fsS http://127.0.0.1:4173 >/dev/null
+
+          pnpm dlx lighthouse http://127.0.0.1:4173 \
+            --output=json \
+            --output-path=./lighthouse-report.json \
+            --quiet \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+
+      - name: Lighthouse Summary
+        id: lighthouse-summary
+        if: always()
+        run: |
+          if [ "${{ steps.filter.outputs.client }}" != "true" ]; then
+            echo "status=skipped (client unchanged)" >> "$GITHUB_OUTPUT"
+            echo "performance=-" >> "$GITHUB_OUTPUT"
+            echo "accessibility=-" >> "$GITHUB_OUTPUT"
+            echo "best_practices=-" >> "$GITHUB_OUTPUT"
+            echo "seo=-" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ ! -f lighthouse-report.json ]; then
+            echo "status=no report" >> "$GITHUB_OUTPUT"
+            echo "performance=-" >> "$GITHUB_OUTPUT"
+            echo "accessibility=-" >> "$GITHUB_OUTPUT"
+            echo "best_practices=-" >> "$GITHUB_OUTPUT"
+            echo "seo=-" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          node - <<'NODE'
+          const fs = require('node:fs');
+
+          const report = JSON.parse(fs.readFileSync('lighthouse-report.json', 'utf8'));
+          const score = (key) =>
+            Math.round((report.categories?.[key]?.score ?? 0) * 100);
+
+          const outputs = [
+            ['status', 'success'],
+            ['performance', String(score('performance'))],
+            ['accessibility', String(score('accessibility'))],
+            ['best_practices', String(score('best-practices'))],
+            ['seo', String(score('seo'))],
+          ];
+
+          fs.appendFileSync(
+            process.env.GITHUB_OUTPUT,
+            outputs.map(([key, value]) => `${key}=${value}`).join('\n') + '\n',
+          );
+          NODE
+
+      - name: PR Comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const formatResult = '${{ steps.format.outcome }}';
+            const lintResult = '${{ steps.lint.outcome }}';
+            const typecheckResult = '${{ steps.typecheck.outcome }}';
+            const testResult = '${{ steps.test.outcome }}';
+            const buildResult = '${{ steps.build.outcome }}';
+            const lighthouseResult = '${{ steps.lighthouse.outcome }}';
+            const lighthouseStatus = '${{ steps.lighthouse-summary.outputs.status }}';
+            const lighthousePerformance = '${{ steps.lighthouse-summary.outputs.performance }}';
+            const lighthouseAccessibility = '${{ steps.lighthouse-summary.outputs.accessibility }}';
+            const lighthouseBestPractices = '${{ steps.lighthouse-summary.outputs.best_practices }}';
+            const lighthouseSeo = '${{ steps.lighthouse-summary.outputs.seo }}';
+            const isClientChanged = '${{ steps.filter.outputs.client }}' === 'true';
+
+            const getEmoji = (result) => {
+              if (result === 'success') return '✅';
+              if (result === 'skipped') return '⏭️';
+              return '❌';
+            };
+
+            const getLighthouseCell = (score) => {
+              const parsedScore = Number(score);
+
+              if (lighthouseResult === 'success' && Number.isFinite(parsedScore)) {
+                if (parsedScore >= 90) return `🟢 ${parsedScore}`;
+                if (parsedScore >= 50) return `🟡 ${parsedScore}`;
+                return `🔴 ${parsedScore}`;
+              }
+
+              if (lighthouseStatus && lighthouseStatus.startsWith('skipped')) {
+                return `⏭️ ${lighthouseStatus}`;
+              }
+
+              return `❌ ${lighthouseStatus || lighthouseResult || 'no report'}`;
+            };
+
+            const checkResults = [formatResult, lintResult, typecheckResult, testResult, buildResult];
+            if (isClientChanged) {
+              checkResults.push(lighthouseResult);
+            }
+            const allPassed = checkResults.every((result) => result === 'success');
+
+            const body = `## CI 결과 ${allPassed ? '✅' : '❌'}
+
+            | 검사 항목 | 결과 |
+            |----------|------|
+            | Format | ${getEmoji(formatResult)} ${formatResult} |
+            | Lint | ${getEmoji(lintResult)} ${lintResult} |
+            | Type Check | ${getEmoji(typecheckResult)} ${typecheckResult} |
+            | Test | ${getEmoji(testResult)} ${testResult} |
+            | Build | ${getEmoji(buildResult)} ${buildResult} |
+
+            ${allPassed ? '🎉 모든 검사를 통과했습니다!' : '⚠️ 일부 검사가 실패했습니다. 로그를 확인해주세요.'}
+
+            ## Lighthouse 결과
+
+            | 검사 항목 | 결과 |
+            |----------|------|
+            | Performance | ${getLighthouseCell(lighthousePerformance)} |
+            | Accessibility | ${getLighthouseCell(lighthouseAccessibility)} |
+            | Best Practices | ${getLighthouseCell(lighthouseBestPractices)} |
+            | SEO | ${getLighthouseCell(lighthouseSeo)} |
+
+            > Lighthouse 항목 설명
+            > - Performance: 로딩/렌더링 속도 및 상호작용 반응성 지표
+            > - Accessibility: 스크린리더, 키보드 탐색 등 접근성 준수 정도
+            > - Best Practices: 보안/최신 웹 표준/안정성 권장사항 준수 정도
+            > - SEO: 검색엔진이 페이지를 잘 이해할 수 있는지에 대한 지표
+            > - 점수 기준: 🟢 90-100 / 🟡 50-89 / 🔴 0-49
+            `;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('## CI 결과')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+      - name: Fail if any check failed
+        if: steps.format.outcome == 'failure' || steps.lint.outcome == 'failure' || steps.typecheck.outcome == 'failure' || steps.build.outcome == 'failure' || (steps.filter.outputs.client == 'true' && steps.lighthouse.outcome == 'failure')
+        run: exit 1

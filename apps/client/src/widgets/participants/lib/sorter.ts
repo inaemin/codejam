@@ -27,14 +27,12 @@ export const sortByNickname = (a: Pt, b: Pt, order: SortOrder) => {
   const weightA = getCharWeight(charA);
   const weightB = getCharWeight(charB);
 
-  let result = 0;
-  if (weightA !== weightB) {
-    result = weightA - weightB;
-  } else {
-    result = a.nickname.localeCompare(b.nickname, undefined, {
-      sensitivity: 'base',
-    });
-  }
+  const result =
+    weightA !== weightB
+      ? weightA - weightB
+      : a.nickname.localeCompare(b.nickname, undefined, {
+          sensitivity: 'base',
+        });
 
   return order === 'asc' ? result : -result;
 };

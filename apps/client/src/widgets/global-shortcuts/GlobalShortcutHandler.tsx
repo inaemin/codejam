@@ -18,7 +18,7 @@ import { useDarkMode } from '@/shared/lib/hooks/useDarkMode';
 export function GlobalShortcutHandler() {
   const { activeSidebarTab, toggleSidebarTab } = useSidebarStore();
   const { toggleConsole } = useConsoleStore();
-  const { toggleTheme, clearHiddenTheme } = useDarkMode();
+  const { toggleTheme } = useDarkMode();
 
   const { handleToggleSplit } = useSplitHandlers();
   const { handleFocusSplit } = useSplitFocus();
@@ -49,7 +49,6 @@ export function GlobalShortcutHandler() {
     onFocusEditor: handleFocusEditor,
     onToggleTheme: toggleTheme,
     onExecuteCode: handleExecuteCode,
-    onClearHiddenTheme: clearHiddenTheme,
   });
 
   return (

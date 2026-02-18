@@ -2,7 +2,7 @@ import type { DragEvent } from 'react';
 import { Header } from '@/widgets/header';
 import { useSocket } from '@/shared/lib/hooks/useSocket';
 import { useRoomJoin } from '@/shared/lib/hooks/useRoomJoin';
-import { RadixToaster as Toaster } from '@codejam/ui';
+import { Toaster } from '@codejam/ui';
 import { useFileStore } from '@/stores/file';
 import { useLoaderData } from 'react-router-dom';
 import { ErrorDialog } from '@/widgets/dialog/ErrorDialog';

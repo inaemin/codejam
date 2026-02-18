@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Participant } from './components';
 import { ParticipantsFilterBar } from './components/ParticipantsFilterBar';
 import { SortControls } from './components/SortControls';
@@ -13,6 +13,7 @@ import type { FilterOption } from './types';
 import { filterParticipants, sortParticipants } from './types';
 import { usePermission } from '@/shared/lib/hooks/usePermission';
 import { PinButton } from '@/widgets/room-sidebar/components/PinButton';
+import { generateMockPts } from '@/stores/mockPts';
 
 /**
  * 참가자 목록 위젯 메인 컴포넌트
@@ -22,9 +23,49 @@ import { PinButton } from '@/widgets/room-sidebar/components/PinButton';
  */
 export function Participants() {
   const pts = usePtsStore((state) => state.pts);
+  const setPt = usePtsStore((state) => state.setPt);
+  const removePt = usePtsStore((state) => state.removePt);
   const { myPtId, roomCode } = useRoomStore();
   const { socket } = useSocketStore();
   const { can } = usePermission();
+
+  const useMockParticipants = useMemo(() => {
+    if (!import.meta.env.DEV || typeof window === 'undefined') {
+      return false;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const mockParticipants = params.get('mockParticipants');
+    const mockAvatarUsers = params.get('mockAvatarUsers');
+
+    return (
+      mockParticipants === '1' ||
+      mockParticipants === 'true' ||
+      mockAvatarUsers === '1' ||
+      mockAvatarUsers === 'true'
+    );
+  }, []);
+
+  const mockPts = useMemo(
+    () => (useMockParticipants ? generateMockPts(50) : {}),
+    [useMockParticipants],
+  );
+
+  useEffect(() => {
+    if (!useMockParticipants) return;
+
+    const mockEntries = Object.entries(mockPts);
+
+    mockEntries.forEach(([ptId, pt]) => {
+      setPt(ptId, pt);
+    });
+
+    return () => {
+      mockEntries.forEach(([ptId]) => {
+        removePt(ptId);
+      });
+    };
+  }, [mockPts, removePt, setPt, useMockParticipants]);
 
   // 상태 관리
   const [selectedFilters, setSelectedFilters] = useState<FilterOption[]>([]);
