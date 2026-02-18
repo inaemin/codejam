@@ -1,8 +1,6 @@
-import { AvvvatarsProvider } from '@codejam/ui';
+import { avvvatarsToSvgString } from '@codejam/ui';
 import { gutter, GutterMarker } from '@codemirror/view';
 import * as Y from 'yjs';
-
-const provider = new AvvvatarsProvider({ variant: 'shape' });
 
 export interface RemoteUser {
   hash: string;
@@ -21,6 +19,25 @@ export type OnAvatarClick = (params: {
   event: MouseEvent;
   users: AvatarUser[];
 }) => void;
+
+const MOCK_AVATAR_USERS: AvatarUser[] = [
+  { hash: '1001', name: '김민준' },
+  { hash: '1002', name: '이서준' },
+  { hash: '1003', name: '박지호' },
+  { hash: '1004', name: '최도윤' },
+  { hash: '1005', name: '정하준' },
+];
+
+function shouldUseMockAvatarUsers() {
+  if (!import.meta.env.DEV || typeof window === 'undefined') {
+    return false;
+  }
+
+  const param = new URLSearchParams(window.location.search).get(
+    'mockAvatarUsers',
+  );
+  return param === '1' || param === 'true';
+}
 
 class AvatarMarker extends GutterMarker {
   private users: AvatarUser[];
@@ -67,10 +84,11 @@ class AvatarMarker extends GutterMarker {
     avatarContainer.style.position = 'relative';
     avatarContainer.style.width = `${avatarSize}px`;
     avatarContainer.style.height = `${avatarSize}px`;
+    avatarContainer.style.fontSize = `${avatarSize}px`;
     avatarContainer.style.borderRadius = '50%';
     avatarContainer.style.overflow = 'hidden'; // 둥근 테두리 밖으로 나가는 것 방지
 
-    const svgString = provider.toSvgString(firstUser.hash, avatarSize);
+    const svgString = avvvatarsToSvgString(firstUser.hash, avatarSize);
 
     avatarContainer.innerHTML = svgString;
 
@@ -106,7 +124,7 @@ class AvatarMarker extends GutterMarker {
 
       // 텍스트 스타일
       overlayEl.style.color = '#ffffff';
-      overlayEl.style.fontSize = `${Math.max(10, Math.round(avatarSize * 0.5))}px`;
+      overlayEl.style.fontSize = '0.5em';
       overlayEl.style.fontWeight = '700';
       overlayEl.style.textShadow = '0px 1px 2px rgba(0,0,0,0.8)';
       overlayEl.style.backgroundColor = 'rgba(0, 0, 0, 0.2)'; // 전체적으로 살짝 어두운 막 추가
@@ -139,6 +157,8 @@ export const lineAvatarExtension = (
   onAvatarClick: OnAvatarClick,
   fontSize: number = 14,
 ) => {
+  const useMockAvatarUsers = shouldUseMockAvatarUsers();
+
   return gutter({
     // 각 라인마다 실행되어 마커를 반환할지 결정
     lineMarker(_, line) {
@@ -170,7 +190,17 @@ export const lineAvatarExtension = (
       }
 
       if (usersOnThisLine.length > 0) {
-        return new AvatarMarker(usersOnThisLine, onAvatarClick, fontSize);
+        const baseUser = usersOnThisLine[0];
+        const displayUsers = useMockAvatarUsers
+          ? [
+              baseUser,
+              ...MOCK_AVATAR_USERS.filter(
+                (user) => user.hash !== baseUser.hash,
+              ),
+            ]
+          : usersOnThisLine;
+
+        return new AvatarMarker(displayUsers, onAvatarClick, fontSize);
       }
       return null;
     },
